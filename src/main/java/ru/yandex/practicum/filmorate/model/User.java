@@ -1,31 +1,33 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Data
-public class Film {
+public class User {
     private int id;
 
-    @NotNull(message = "Название не может быть пустым")
+    @Email(message = "Некорректный email")
+    @NotNull(message = "Email не может быть пустым")
+    private String email;
+
+    @NotNull(message = "Логин не может быть пустым")
+    @Size(min = 1, message = "Логин не может быть пустым и не может содержать пробелы")
+    private String login;
+
     private String name;
 
-    @Size(max = 200, message = "Описание не может превышать 200 символов")
-    private String description;
+    @NotNull(message = "Дата рождения не может быть пустой")
+    private LocalDate birthday;
 
-    @NotNull(message = "Дата релиза не может быть пустой")
-    private LocalDate releaseDate;
-
-    @NotNull(message = "Продолжительность не может быть пустой")
-    private Integer duration;
-
-    public Film(int id, String name, String description, LocalDate releaseDate, Integer duration) {
+    public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
+        this.email = email;
+        this.login = login;
+        this.name = name != null ? name : login;
+        this.birthday = birthday;
     }
 }

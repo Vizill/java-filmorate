@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +19,10 @@ public class UserController {
     private int idCounter = 1;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody @Valid User user) {
+    public ResponseEntity<?> createUser(@RequestBody @Valid User user) {
+        validateUser(user);
         user.setId(idCounter++);
 
-        // Если имя пустое, то устанавливаем его равным логину
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
@@ -36,10 +37,8 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<User> updateUser(@RequestBody @Valid User user) {
-        if (user.getId() <= 0) {
-            throw new ValidationException("ID пользователя должен быть больше 0.");
-        }
+    public ResponseEntity<?> updateUser(@RequestBody @Valid User user) {
+        validateUser(user);
 
         for (User u : users) {
             if (u.getId() == user.getId()) {
@@ -51,6 +50,19 @@ public class UserController {
             }
         }
 
-        throw new ValidationException("Пользователь с ID " + user.getId() + " не найден.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Пользователь с ID " + user.getId() + " не найден.");
+    }
+
+    private void validateUser(User user) {
+        if (user.getEmail() == null || !user.getEmail().contains("@")) {
+            throw new ValidationException("Некорректный email: " + user.getEmail());
+        }
+        if (user.getLogin() == null || user.getLogin().contains(" ") || user.getLogin().isBlank()) {
+            throw new ValidationException("Логин не может быть пустым или содержать пробелы.");
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("Дата рождения не может быть в будущем.");
+        }
     }
 }

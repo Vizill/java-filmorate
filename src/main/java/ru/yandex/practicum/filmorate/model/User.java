@@ -4,9 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Setter
@@ -15,17 +13,18 @@ import java.time.LocalDate;
 public class User {
     private int id;
 
-    @Email(message = "Некорректный email")
-    @NotNull(message = "Email не может быть пустым")
+    @NotBlank(message = "Электронная почта не может быть пустой.")
+    @Email(message = "Некорректный формат электронной почты. Должен содержать символ '@'.")
     private String email;
 
-    @NotNull(message = "Логин не может быть пустым")
-    @Size(min = 1, message = "Логин не может быть пустым и не может содержать пробелы")
+    @NotBlank(message = "Логин не может быть пустым.")
+    @Pattern(regexp = "^\\S+$", message = "Логин не должен содержать пробелы.")
     private String login;
 
     private String name;
 
-    @NotNull(message = "Дата рождения не может быть пустой")
+    @NotNull(message = "Дата рождения не может быть пустой.")
+    @Past(message = "Дата рождения не может быть в будущем.")
     private LocalDate birthday;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
@@ -34,6 +33,10 @@ public class User {
         this.login = login;
         this.name = name != null ? name : login;
         this.birthday = birthday;
+    }
+
+    public String getName() {
+        return (name == null || name.isBlank()) ? login : name;
     }
 
 }

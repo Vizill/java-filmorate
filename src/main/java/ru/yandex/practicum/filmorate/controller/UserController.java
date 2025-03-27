@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 
@@ -50,8 +51,7 @@ public class UserController {
             }
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Пользователь с ID " + user.getId() + " не найден.");
+        throw new NotFoundException("Пользователь с ID " + user.getId() + " не найден.");
     }
 
     private void validateUser(User user) {

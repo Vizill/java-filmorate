@@ -1,14 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
-@Setter
-@Getter
 @Data
 public class User {
     private int id;
@@ -31,12 +26,11 @@ public class User {
         this.id = id;
         this.email = email;
         this.login = login;
-        this.name = name != null ? name : login;
+        this.name = (name == null || name.isBlank()) ? login : name;
         this.birthday = birthday;
     }
 
-    public String getName() {
-        return (name == null || name.isBlank()) ? login : name;
+    public void setName(String name) {
+        this.name = (name == null || name.isBlank()) ? this.login : name;
     }
-
 }

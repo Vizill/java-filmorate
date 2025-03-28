@@ -5,8 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +20,9 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody @Valid User user) {
         user.setId(idCounter++);
-        user.setName(user.getName() == null || user.getName().isBlank() ? user.getLogin() : user.getName());
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         users.add(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }

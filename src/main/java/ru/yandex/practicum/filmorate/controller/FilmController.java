@@ -5,9 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-
-import javax.validation.Valid;
-import java.time.LocalDate;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +16,6 @@ public class FilmController {
 
     private final List<Film> films = new ArrayList<>();
     private int idCounter = 1;
-    private static final LocalDate EARLIEST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @PostMapping
     public ResponseEntity<?> createFilm(@RequestBody @Valid Film film) {

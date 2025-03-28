@@ -59,7 +59,8 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public ResponseEntity<List<User>> getFriends(@PathVariable int id) {
-        return ResponseEntity.ok(userService.getFriends(id));
+        List<User> friends = userService.getFriends(id);
+        return ResponseEntity.ok(friends);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")

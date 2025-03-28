@@ -46,6 +46,7 @@ public class UserService {
     }
 
     public List<User> getFriends(int userId) {
+        getUserById(userId);
         return userStorage.getFriends(userId);
     }
 

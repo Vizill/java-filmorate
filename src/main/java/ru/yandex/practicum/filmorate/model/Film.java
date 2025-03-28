@@ -13,6 +13,7 @@ public class Film {
     @NotBlank(message = "Название не может быть пустым")
     private String name;
 
+    @NotBlank(message = "Описание не может быть пустым")
     @Size(max = 200, message = "Описание не может превышать 200 символов")
     private String description;
 
@@ -20,7 +21,7 @@ public class Film {
     @ReleaseDateConstraint
     private LocalDate releaseDate;
 
-    @Min(value = 1, message = "Продолжительность фильма должна быть положительной")
+    @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
 
     public Film(int id, String name, String description, LocalDate releaseDate, Integer duration) {
@@ -30,5 +31,4 @@ public class Film {
         this.releaseDate = releaseDate;
         this.duration = duration;
     }
-
 }

@@ -20,7 +20,7 @@ public class User {
     private String name;
 
     @NotNull(message = "Дата рождения не может быть пустой.")
-    @Past(message = "Дата рождения не может быть в будущем.")
+    @PastOrPresent(message = "Дата рождения не может быть в будущем.")
     private LocalDate birthday;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
@@ -29,9 +29,5 @@ public class User {
         this.login = login;
         this.name = (name == null || name.isBlank()) ? login : name;
         this.birthday = birthday;
-    }
-
-    public void setName(String name) {
-        this.name = (name == null || name.isBlank()) ? this.login : name;
     }
 }

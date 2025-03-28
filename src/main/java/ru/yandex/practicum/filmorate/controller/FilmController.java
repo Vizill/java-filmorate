@@ -9,11 +9,11 @@ import ru.yandex.practicum.filmorate.model.Film;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-
     private final List<Film> films = new ArrayList<>();
     private int idCounter = 1;
 
@@ -30,18 +30,21 @@ public class FilmController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateFilm(@RequestBody @Valid Film film) {
-        Film existingFilm = films.stream()
-                .filter(f -> f.getId() == film.getId())
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Фильм с ID " + film.getId() + " не найден."));
+    public ResponseEntity<?> updateFilm(@RequestBody @Valid Film updatedFilm) {
+        Optional<Film> filmOptional = films.stream()
+                .filter(f -> f.getId() == updatedFilm.getId())
+                .findFirst();
 
-        existingFilm.setName(film.getName());
-        existingFilm.setDescription(film.getDescription());
-        existingFilm.setReleaseDate(film.getReleaseDate());
-        existingFilm.setDuration(film.getDuration());
+        if (filmOptional.isEmpty()) {
+            throw new NotFoundException("Фильм с ID " + updatedFilm.getId() + " не найден.");
+        }
+
+        Film existingFilm = filmOptional.get();
+        existingFilm.setName(updatedFilm.getName());
+        existingFilm.setDescription(updatedFilm.getDescription());
+        existingFilm.setReleaseDate(updatedFilm.getReleaseDate());
+        existingFilm.setDuration(updatedFilm.getDuration());
 
         return ResponseEntity.ok(existingFilm);
     }
 }
-

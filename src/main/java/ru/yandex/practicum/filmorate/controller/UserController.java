@@ -22,6 +22,7 @@ public class UserController {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
+
         user.setId(idCounter++);
         users.add(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
@@ -46,5 +47,4 @@ public class UserController {
 
         return ResponseEntity.ok(existingUser);
     }
-
 }

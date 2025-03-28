@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +7,6 @@ import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +16,6 @@ public class FilmController {
 
     private final List<Film> films = new ArrayList<>();
     private int idCounter = 1;
-    private static final LocalDate EARLIEST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @PostMapping
     public ResponseEntity<Film> createFilm(@RequestBody @Valid Film film) {
@@ -46,5 +43,5 @@ public class FilmController {
 
         return ResponseEntity.ok(existingFilm);
     }
-
 }
+

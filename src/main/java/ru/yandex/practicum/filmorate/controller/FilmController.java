@@ -28,6 +28,7 @@ public class FilmController {
 
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
+        filmService.getFilmById(film.getId());
         return ResponseEntity.ok(filmService.updateFilm(film));
     }
 

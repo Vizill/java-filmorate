@@ -49,6 +49,7 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getFriends(int userId) {
         return Optional.ofNullable(friends.get(userId))
                 .map(ids -> ids.stream()
+                        .distinct()
                         .map(users::get)
                         .filter(Objects::nonNull)
                         .toList())

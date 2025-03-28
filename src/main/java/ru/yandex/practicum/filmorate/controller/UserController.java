@@ -27,6 +27,7 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
+        userService.getUserById(user.getId());
         return ResponseEntity.ok(userService.updateUser(user));
     }
 

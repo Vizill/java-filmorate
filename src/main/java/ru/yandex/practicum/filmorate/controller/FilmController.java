@@ -21,7 +21,7 @@ public class FilmController {
     private static final LocalDate EARLIEST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @PostMapping
-    public ResponseEntity<?> createFilm(@RequestBody @Valid Film film) {
+    public ResponseEntity<Film> createFilm(@RequestBody @Valid Film film) {
         film.setId(idCounter++);
         films.add(film);
         return ResponseEntity.status(HttpStatus.CREATED).body(film);

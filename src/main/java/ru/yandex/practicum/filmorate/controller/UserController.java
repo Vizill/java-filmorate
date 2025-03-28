@@ -18,13 +18,11 @@ public class UserController {
     private int idCounter = 1;
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody @Valid User user) {
-        user.setId(idCounter++);
-
+    public ResponseEntity<User> createUser(@RequestBody @Valid User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-
+        user.setId(idCounter++);
         users.add(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }

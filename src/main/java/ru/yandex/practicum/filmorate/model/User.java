@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Data;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class User {
@@ -21,6 +23,8 @@ public class User {
     @NotNull(message = "Дата рождения не может быть пустой.")
     @PastOrPresent(message = "Дата рождения не может быть в будущем.")
     private LocalDate birthday;
+
+    private final Set<Integer> friends = new HashSet<>();
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;

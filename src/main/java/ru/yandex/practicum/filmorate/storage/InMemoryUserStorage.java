@@ -7,7 +7,6 @@ import java.util.*;
 @Component
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
-    private final Map<Integer, Set<Integer>> friends = new HashMap<>();
     private int idCounter = 1;
 
     @Override
@@ -35,33 +34,43 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void addFriend(int userId, int friendId) {
-        friends.computeIfAbsent(userId, k -> new HashSet<>()).add(friendId);
-        friends.computeIfAbsent(friendId, k -> new HashSet<>()).add(userId);
+        User user = users.get(userId);
+        User friend = users.get(friendId);
+        user.getFriends().add(friendId);
+        friend.getFriends().add(userId);
     }
 
     @Override
     public void removeFriend(int userId, int friendId) {
-        Optional.ofNullable(friends.get(userId)).ifPresent(set -> set.remove(friendId));
-        Optional.ofNullable(friends.get(friendId)).ifPresent(set -> set.remove(userId));
+        User user = users.get(userId);
+        User friend = users.get(friendId);
+        user.getFriends().remove(friendId);
+        friend.getFriends().remove(userId);
     }
 
     @Override
     public List<User> getFriends(int userId) {
-        return Optional.ofNullable(friends.get(userId))
-                .map(ids -> ids.stream()
-                        .distinct()
-                        .map(users::get)
-                        .filter(Objects::nonNull)
-                        .toList())
-                .orElse(List.of());
+        User user = users.get(userId);
+        if (user == null) {
+            return List.of();
+        }
+        return user.getFriends().stream()
+                .map(users::get)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     @Override
     public List<User> getCommonFriends(int userId, int otherId) {
-        Set<Integer> userFriends = friends.getOrDefault(userId, Set.of());
-        Set<Integer> otherFriends = friends.getOrDefault(otherId, Set.of());
-        return userFriends.stream()
-                .filter(otherFriends::contains)
+        User user = users.get(userId);
+        User otherUser = users.get(otherId);
+
+        if (user == null || otherUser == null) {
+            return List.of();
+        }
+
+        return user.getFriends().stream()
+                .filter(otherUser.getFriends()::contains)
                 .map(users::get)
                 .filter(Objects::nonNull)
                 .toList();

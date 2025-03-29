@@ -7,7 +7,6 @@ import java.util.*;
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
-    private final Map<Integer, Set<Integer>> likes = new HashMap<>();
     private int idCounter = 1;
 
     @Override
@@ -35,18 +34,20 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void addLike(int filmId, int userId) {
-        likes.computeIfAbsent(filmId, k -> new HashSet<>()).add(userId);
+        Film film = films.get(filmId);
+        film.getLikes().add(userId);
     }
 
     @Override
     public void removeLike(int filmId, int userId) {
-        Optional.ofNullable(likes.get(filmId)).ifPresent(set -> set.remove(userId));
+        Film film = films.get(filmId);
+        film.getLikes().remove(userId);
     }
 
     @Override
     public List<Film> getPopular(int count) {
         return films.values().stream()
-                .sorted(Comparator.comparingInt(f -> -Optional.ofNullable(likes.get(f.getId())).map(Set::size).orElse(0)))
+                .sorted(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed())
                 .limit(count)
                 .toList();
     }

@@ -25,9 +25,11 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом.")
     private int duration;
 
+    @Builder.Default
     private Set<Integer> likes = new HashSet<>();
+
     private int mpaId;
-    private Set<Genre> genres; // Изменено с List на Set
+    private Set<Genre> genres;
 
     public Film(int id, String name, String description, LocalDate releaseDate,
                 int duration, int mpaId, Set<Genre> genres) {

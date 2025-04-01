@@ -1,0 +1,44 @@
+CREATE TABLE IF NOT EXISTS mpa_ratings (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS genres (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS films (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(2000),
+    release_date DATE NOT NULL,
+    duration INTEGER NOT NULL,
+    mpa_id INTEGER REFERENCES mpa_ratings(id)
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    login VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255),
+    birthday DATE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS film_genres (
+    film_id INTEGER REFERENCES films(id) ON DELETE CASCADE,
+    genre_id INTEGER REFERENCES genres(id) ON DELETE CASCADE,
+    PRIMARY KEY (film_id, genre_id)
+);
+
+CREATE TABLE IF NOT EXISTS likes (
+    film_id INTEGER REFERENCES films(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (film_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS friends (
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    friend_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, friend_id)
+);

@@ -22,24 +22,29 @@ public class Film {
     @ReleaseDateConstraint
     private LocalDate releaseDate;
 
-    @Positive(message = "Продолжительность фильма должна быть положительным числом.")
+    @Positive(message = "Продолжительность фильма должна быть положительным числом")
     private int duration;
 
     @Builder.Default
     private Set<Integer> likes = new HashSet<>();
 
-    private int mpaId;
+    private Mpa mpa;  // Изменить с mpaId на объект Mpa
     private Set<Genre> genres;
 
-    public Film(int id, String name, String description, LocalDate releaseDate,
-                int duration, Set<Integer> likes, int mpaId, Set<Genre> genres) {
+    public Film(int id, String name, String description, LocalDate releaseDate, int duration, Set<Integer> likes, Mpa mpa, Set<Genre> genres) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.likes = likes;
-        this.mpaId = mpaId;
+        this.mpa = mpa;
         this.genres = genres;
+    }
+
+
+
+    public int getRate() {
+        return likes.size();
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import jakarta.validation.Valid;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -39,7 +40,11 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Film> getFilm(@PathVariable int id) {
-        return ResponseEntity.ok(filmService.getFilmById(id));
+        Film film = filmService.getFilmById(id);
+        if (film == null) {
+            throw new NotFoundException("Фильм с ID " + id + " не найден");
+        }
+        return ResponseEntity.ok(film);
     }
 
     @PutMapping("/{id}/like/{userId}")

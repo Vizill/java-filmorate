@@ -107,15 +107,16 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
-        return Film.builder()
-                .id(rs.getInt("id"))
-                .name(rs.getString("name"))
-                .description(rs.getString("description"))
-                .releaseDate(rs.getDate("release_date").toLocalDate())
-                .duration(rs.getInt("duration"))
-                .mpaId(rs.getInt("mpa_id"))
-                .genres(new HashSet<>())
-                .build();
+        return new Film(
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getDate("release_date").toLocalDate(),
+                rs.getInt("duration"),
+                new HashSet<>(),
+                rs.getInt("mpa_id"),
+                new HashSet<>()
+        );
     }
 
     private void loadAdditionalData(Film film) {

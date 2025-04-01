@@ -32,12 +32,13 @@ public class Film {
     private Set<Genre> genres;
 
     public Film(int id, String name, String description, LocalDate releaseDate,
-                int duration, int mpaId, Set<Genre> genres) {
+                int duration, Set<Integer> likes, int mpaId, Set<Genre> genres) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.likes = likes;
         this.mpaId = mpaId;
         this.genres = genres;
     }

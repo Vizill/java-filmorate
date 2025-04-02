@@ -62,12 +62,12 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> getById(int id) {
+    public User getById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, this::mapRowToUser, id));
+            return jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
         } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
+            throw new NotFoundException("Пользователь с ID " + id + " не найден");
         }
     }
 

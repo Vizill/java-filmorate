@@ -40,11 +40,7 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Film> getFilm(@PathVariable int id) {
-        Film film = filmService.getFilmById(id);
-        if (film == null) {
-            throw new NotFoundException("Фильм с ID " + id + " не найден");
-        }
-        return ResponseEntity.ok(film);
+        return ResponseEntity.ok(filmService.getFilmById(id));
     }
 
     @PutMapping("/{id}/like/{userId}")

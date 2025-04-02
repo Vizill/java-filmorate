@@ -1,13 +1,14 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class MpaDbStorage implements MpaStorage {
@@ -24,12 +25,12 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
-    public Optional<Mpa> getMpaById(int id) {
+    public Mpa getMpaById(int id) {
         String sql = "SELECT * FROM mpa_ratings WHERE id = ?";
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, this::mapRowToMpa, id));
-        } catch (Exception e) {
-            return Optional.empty();
+            return jdbcTemplate.queryForObject(sql, this::mapRowToMpa, id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException("Рейтинг MPA с ID " + id + " не найден");
         }
     }
 

@@ -2,20 +2,21 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.*;
-import java.util.List;
-import java.util.Objects;
+import java.sql.Date;
+import java.util.*;
 
 @Repository
 @Qualifier("userDbStorage")
 public class UserDbStorage implements UserStorage {
-
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -42,12 +43,15 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User update(User user) {
         String sql = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE id = ?";
-        jdbcTemplate.update(sql,
+        int updated = jdbcTemplate.update(sql,
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
                 user.getBirthday(),
                 user.getId());
+        if (updated == 0) {
+            throw new NotFoundException("Пользователь с ID " + user.getId() + " не найден");
+        }
         return user;
     }
 
@@ -60,16 +64,47 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User getById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
+        try {
+            return jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException("Пользователь с ID " + id + " не найден");
+        }
+    }
+
+    @Override
+    public void addFriend(int userId, int friendId) {
+        String sql = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, userId, friendId);
+    }
+
+    @Override
+    public void removeFriend(int userId, int friendId) {
+        String sql = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
+        jdbcTemplate.update(sql, userId, friendId);
+    }
+
+    @Override
+    public List<User> getFriends(int userId) {
+        String sql = "SELECT u.* FROM users u JOIN friends f ON u.id = f.friend_id WHERE f.user_id = ?";
+        return jdbcTemplate.query(sql, this::mapRowToUser, userId);
+    }
+
+    @Override
+    public List<User> getCommonFriends(int userId, int otherId) {
+        String sql = "SELECT u.* FROM users u " +
+                "JOIN friends f1 ON u.id = f1.friend_id " +
+                "JOIN friends f2 ON u.id = f2.friend_id " +
+                "WHERE f1.user_id = ? AND f2.user_id = ?";
+        return jdbcTemplate.query(sql, this::mapRowToUser, userId, otherId);
     }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
-        return User.builder()
-                .id(rs.getInt("id"))
-                .email(rs.getString("email"))
-                .login(rs.getString("login"))
-                .name(rs.getString("name"))
-                .birthday(rs.getDate("birthday").toLocalDate())
-                .build();
+        return new User(
+                rs.getInt("id"),
+                rs.getString("email"),
+                rs.getString("login"),
+                rs.getString("name"),
+                rs.getDate("birthday").toLocalDate()
+        );
     }
 }

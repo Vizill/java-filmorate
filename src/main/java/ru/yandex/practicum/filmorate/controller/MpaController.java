@@ -1,29 +1,28 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.service.MpaService;
+import ru.yandex.practicum.filmorate.storage.MpaDao;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/mpa")
 public class MpaController {
-    private final MpaService mpaService;
 
-    @Autowired
-    public MpaController(MpaService mpaService) {
-        this.mpaService = mpaService;
+    private final MpaDao mpaDao;
+
+    public MpaController(MpaDao mpaDao) {
+        this.mpaDao = mpaDao;
     }
 
     @GetMapping
     public List<Mpa> getAllMpa() {
-        return mpaService.getAllMpa();
+        return mpaDao.getAllMpa();
     }
 
     @GetMapping("/{id}")
     public Mpa getMpaById(@PathVariable int id) {
-        return mpaService.getMpaById(id);
+        return mpaDao.getMpaById(id);
     }
 }

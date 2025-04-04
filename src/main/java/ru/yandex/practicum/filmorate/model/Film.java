@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validation.ReleaseDateConstraint;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
 public class Film {
     private int id;
 
@@ -29,11 +31,14 @@ public class Film {
 
     private List<Integer> genreIds;
 
-    public Film(int id, String name, String description, LocalDate releaseDate, Integer duration) {
+    public Film(int id, String name, String description, LocalDate releaseDate, int duration,
+                int ratingId, List<Integer> genreIds) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.ratingId = ratingId;
+        this.genreIds = genreIds;
     }
 }

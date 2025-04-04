@@ -52,5 +52,4 @@ public class UserService {
         return userStorage.getCommonFriends(userId, otherId);
     }
 
-
 }

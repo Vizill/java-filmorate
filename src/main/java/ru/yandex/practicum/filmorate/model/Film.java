@@ -42,8 +42,6 @@ public class Film {
         this.genres = genres;
     }
 
-
-
     public int getRate() {
         return likes.size();
     }

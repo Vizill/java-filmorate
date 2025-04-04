@@ -1,62 +1,42 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.constraints.Positive;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import jakarta.validation.Valid;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmService filmService;
 
-    @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
+    private final FilmStorage filmStorage;
+
+    public FilmController(@Qualifier("filmDbStorage") FilmStorage filmStorage) {
+        this.filmStorage = filmStorage;
     }
 
     @PostMapping
-    public ResponseEntity<Film> createFilm(@Valid @RequestBody Film film) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(filmService.createFilm(film));
+    public ResponseEntity<Film> createFilm(@RequestBody @Valid Film film) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(filmStorage.create(film));
     }
 
     @PutMapping
-    public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
-        filmService.getFilmById(film.getId());
-        return ResponseEntity.ok(filmService.updateFilm(film));
+    public ResponseEntity<Film> updateFilm(@RequestBody @Valid Film film) {
+        return ResponseEntity.ok(filmStorage.update(film));
     }
 
     @GetMapping
-    public ResponseEntity<List<Film>> getFilms() {
-        return ResponseEntity.ok(filmService.getAllFilms());
+    public ResponseEntity<List<Film>> getAllFilms() {
+        return ResponseEntity.ok(filmStorage.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Film> getFilm(@PathVariable int id) {
-        return ResponseEntity.ok(filmService.getFilmById(id));
-    }
-
-    @PutMapping("/{id}/like/{userId}")
-    public ResponseEntity<Void> addLike(@PathVariable int id, @PathVariable int userId) {
-        filmService.addLike(id, userId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{id}/like/{userId}")
-    public ResponseEntity<Void> removeLike(@PathVariable int id, @PathVariable int userId) {
-        filmService.removeLike(id, userId);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/popular")
-    public ResponseEntity<List<Film>> getPopular(
-            @RequestParam(defaultValue = "10") @Positive int count) {
-        return ResponseEntity.ok(filmService.getPopularFilms(count));
+    public ResponseEntity<Film> getFilmById(@PathVariable int id) {
+        return ResponseEntity.ok(filmStorage.getById(id));
     }
 }

@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-
 import java.util.List;
 
 @RestController
@@ -27,7 +26,6 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
-        userService.getUserById(user.getId());
         return ResponseEntity.ok(userService.updateUser(user));
     }
 
@@ -59,8 +57,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public ResponseEntity<List<User>> getFriends(@PathVariable int id) {
-        List<User> friends = userService.getFriends(id);
-        return ResponseEntity.ok(friends);
+        return ResponseEntity.ok(userService.getFriends(id));
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")

@@ -37,7 +37,8 @@ public class FilmDbStorage implements FilmStorage {
             return ps;
         }, keyHolder);
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
-        updateFilmGenres(film); // Заполняет жанры
+        updateFilmGenres(film);
+        film.setLikes(new HashSet<>());
         return film;
     }
 
@@ -115,6 +116,7 @@ public class FilmDbStorage implements FilmStorage {
                 .duration(rs.getInt("duration"))
                 .mpa(mpaStorage.getMpaById(rs.getInt("mpa_id")))
                 .genres(new HashSet<>())
+                .likes(new HashSet<>())
                 .build();
     }
 
@@ -139,7 +141,10 @@ public class FilmDbStorage implements FilmStorage {
     private void loadLikes(Film film) {
         String sql = "SELECT user_id FROM likes WHERE film_id = ?";
         List<Integer> likes = jdbcTemplate.queryForList(sql, Integer.class, film.getId());
-        film.setLikes(new HashSet<>(likes));
+        if (film.getLikes() == null) {
+            film.setLikes(new HashSet<>());
+        }
+        film.getLikes().addAll(likes);
     }
 
     private void updateFilmGenres(Film film) {

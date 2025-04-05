@@ -1,13 +1,14 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.ReleaseDateConstraint;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
+@Builder
 public class Film {
     private int id;
 
@@ -21,16 +22,29 @@ public class Film {
     @ReleaseDateConstraint
     private LocalDate releaseDate;
 
-    @Positive(message = "Продолжительность фильма должна быть положительным числом.")
+    @Positive(message = "Продолжительность фильма должна быть положительным числом")
     private int duration;
 
-    private final Set<Integer> likes = new HashSet<>();
+    @Builder.Default
+    private Set<Integer> likes = new HashSet<>();
 
-    public Film(int id, String name, String description, LocalDate releaseDate, Integer duration) {
+    @NotNull(message = "Рейтинг MPA обязателен.")
+    private Mpa mpa;
+
+    private Set<Genre> genres;
+
+    public Film(int id, String name, String description, LocalDate releaseDate, int duration, Set<Integer> likes, Mpa mpa, Set<Genre> genres) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.likes = likes;
+        this.mpa = mpa;
+        this.genres = genres;
+    }
+
+    public int getRate() {
+        return likes.size();
     }
 }

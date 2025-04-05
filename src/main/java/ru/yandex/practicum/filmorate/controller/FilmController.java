@@ -1,15 +1,18 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.FieldError;
 import ru.yandex.practicum.filmorate.model.Film;
-import jakarta.validation.Valid;
 import ru.yandex.practicum.filmorate.service.FilmService;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/films")
@@ -28,7 +31,6 @@ public class FilmController {
 
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
-        filmService.getFilmById(film.getId());
         return ResponseEntity.ok(filmService.updateFilm(film));
     }
 
@@ -58,5 +60,19 @@ public class FilmController {
     public ResponseEntity<List<Film>> getPopular(
             @RequestParam(defaultValue = "10") @Positive int count) {
         return ResponseEntity.ok(filmService.getPopularFilms(count));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 }

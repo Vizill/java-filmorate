@@ -28,6 +28,7 @@ public class Film {
     @Builder.Default
     private Set<Integer> likes = new HashSet<>();
 
+    @NotNull(message = "Рейтинг MPA обязателен.")
     private Mpa mpa;
 
     private Set<Genre> genres;
